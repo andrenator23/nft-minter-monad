@@ -1,0 +1,11 @@
+{
+  "name": "nft-minter-monad",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "serve -s .",
+    "build": "echo 'No build needed for simple static site'"
+  },
+  "dependencies": {
+    "ethers": "^5.7.2"
+  }
+}
