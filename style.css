@@ -1,0 +1,76 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: #0e0e1b;
+  color: #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #1a1a2e;
+  padding: 15px 30px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #a29bfe;
+}
+
+#connectWalletBtn {
+  padding: 8px 16px;
+  background: #6c5ce7;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#connectWalletBtn:hover {
+  background: #5a4ecf;
+}
+
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  text-align: center;
+}
+
+input[type="text"] {
+  padding: 10px;
+  width: 300px;
+  border-radius: 5px;
+  border: none;
+  margin-bottom: 20px;
+}
+
+#mintBtn {
+  padding: 10px 20px;
+  background: #00cec9;
+  color: black;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#mintBtn:hover {
+  background: #01a3a4;
+}
+
+footer {
+  background: #1a1a2e;
+  text-align: center;
+  padding: 15px 0;
+  color: #aaa;
+  font-size: 0.9rem;
+}
