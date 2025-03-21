@@ -1,68 +1,77 @@
 body {
   margin: 0;
-  font-family: 'Arial', sans-serif;
-  background: #0f0f1a;
-  color: #fff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #121212;
+  color: #ffffff;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
 header {
-  background: #1a1a2e;
-  padding: 20px;
+  background: #1f1f1f;
+  padding: 20px 30px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-header h1 {
+h1 {
+  color: #f39c12;
   margin: 0;
-  color: #a29bfe;
 }
 
 #connectWalletBtn {
-  padding: 10px 15px;
-  background: #6c5ce7;
-  border: none;
+  background-color: #2980b9;
   color: white;
-  cursor: pointer;
+  padding: 10px 20px;
+  border: none;
   border-radius: 5px;
+  cursor: pointer;
 }
 
 main {
   flex: 1;
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  padding: 40px;
+  align-items: center;
+  padding: 20px;
+}
+
+.mint-box {
+  background: #1e272e;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.1);
+  text-align: center;
 }
 
 input {
+  width: 100%;
   padding: 10px;
-  margin: 10px 0;
-  width: 300px;
+  margin: 15px 0;
   border: none;
   border-radius: 5px;
 }
 
 #mintBtn {
-  padding: 10px 20px;
-  background: #00cec9;
-  border: none;
+  background-color: #27ae60;
   color: white;
-  cursor: pointer;
+  padding: 10px 20px;
+  border: none;
   border-radius: 5px;
+  cursor: pointer;
 }
 
 #statusMsg {
-  margin-top: 20px;
-  font-size: 1rem;
+  margin-top: 15px;
+  font-size: 0.95rem;
 }
 
 footer {
-  background: #1a1a2e;
+  background: #1f1f1f;
   text-align: center;
   padding: 15px;
+  font-size: 0.9rem;
+  color: #aaa;
 }
