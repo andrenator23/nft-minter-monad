@@ -3,131 +3,162 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Monad NFT Minter</title>
-  <!-- Ethers.js -->
-  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
+  <title>NFT Minter - Monad</title>
   <style>
     body {
       margin: 0;
-      font-family: 'Arial', sans-serif;
-      background: linear-gradient(to right, #1f1c2c, #928dab);
-      color: white;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1e1e2f, #3a3a5c);
+      color: #fff;
     }
+
     header, footer {
-      background-color: #2c2c54;
-      padding: 15px 30px;
+      background-color: #2c2c44;
+      padding: 1em;
+      text-align: center;
+    }
+
+    header {
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-    header h1, footer p {
+
+    header h1 {
       margin: 0;
+      font-size: 1.5em;
     }
-    .connect-btn {
-      background: #8e44ad;
+
+    #connectWallet {
+      padding: 0.5em 1em;
+      background-color: #6c5ce7;
       border: none;
-      padding: 10px 15px;
-      color: white;
-      cursor: pointer;
       border-radius: 5px;
-      font-weight: bold;
+      color: #fff;
+      cursor: pointer;
     }
-    .connect-btn:hover {
-      background: #732d91;
+
+    #connectWallet:hover {
+      background-color: #a29bfe;
     }
+
     main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      padding: 2em;
       text-align: center;
-      padding: 20px;
     }
-    .mint-btn {
-      margin-top: 20px;
-      background: #27ae60;
-      border: none;
-      padding: 10px 20px;
-      color: white;
-      cursor: pointer;
+
+    .mint-section {
+      margin-top: 2em;
+    }
+
+    input[type="text"] {
+      padding: 0.5em;
       border-radius: 5px;
-      font-size: 1rem;
-      font-weight: bold;
+      border: 1px solid #888;
+      width: 60%;
     }
-    .mint-btn:hover {
-      background: #1e8449;
+
+    button.mint-btn {
+      margin-top: 1em;
+      padding: 0.5em 1.5em;
+      background-color: #00cec9;
+      border: none;
+      border-radius: 5px;
+      color: #000;
+      cursor: pointer;
+    }
+
+    button.mint-btn:hover {
+      background-color: #81ecec;
     }
   </style>
 </head>
 <body>
   <header>
     <h1>Monad NFT Minter</h1>
-    <button id="connectWallet" class="connect-btn">Connect Wallet</button>
+    <button id="connectWallet">Connect Wallet</button>
   </header>
 
   <main>
-    <h2>Mint Your Unique NFT</h2>
-    <p>Click below to mint your NFT on Monad</p>
-    <button id="mintButton" class="mint-btn">Mint NFT</button>
+    <h2>Mint Your NFT</h2>
+    <div class="mint-section">
+      <input type="text" id="tokenURI" placeholder="Enter token URI..." />
+      <br />
+      <button class="mint-btn" id="mintButton">Mint NFT</button>
+    </div>
   </main>
 
   <footer>
-    <p>&copy; 2025 Monad Minter. All rights reserved.</p>
+    <p>&copy; 2025 Monad NFT Minter. All rights reserved.</p>
   </footer>
 
-  <!-- App JS -->
+  <!-- Ethers.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers/dist/ethers.min.js"></script>
+
+  <!-- Wallet Connect and Mint Script -->
   <script>
     const connectWalletButton = document.getElementById('connectWallet');
     const mintButton = document.getElementById('mintButton');
+    const tokenURIInput = document.getElementById('tokenURI');
 
     let signer;
-    const CONTRACT_ADDRESS = '0xE113e1194f223E53Dda814b5f3F8F20019b8cD45';
-    const ABI = [
+    const contractAddress = "0xE113e1194f223E53Dda814b5f3F8F20019b8cD45";
+    const contractABI = [
       {
-        "inputs": [{"internalType": "string", "name": "_tokenURI", "type": "string"}],
-        "name": "mint",
-        "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
-        "stateMutability": "nonpayable",
-        "type": "function"
+        "inputs":[{"internalType":"string","name":"_tokenURI","type":"string"}],
+        "name":"mint",
+        "outputs":[{"internalType":"uint256","name":"","type":"uint256"}],
+        "stateMutability":"nonpayable",
+        "type":"function"
       }
     ];
 
     connectWalletButton.onclick = async () => {
+      console.log("Connect Wallet Clicked");
+
       if (typeof window.ethereum !== 'undefined') {
+        console.log("MetaMask is detected!");
+
         try {
-          const provider = new ethers.providers.Web3Provider(window.ethereum);
+          const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
           await provider.send("eth_requestAccounts", []);
           signer = provider.getSigner();
           const address = await signer.getAddress();
+
           connectWalletButton.textContent = `Connected: ${address.slice(0,6)}...${address.slice(-4)}`;
+          console.log("Connected to:", address);
+
         } catch (err) {
-          console.error('Connection Error:', err);
+          console.error("User denied account access or error:", err);
         }
+
       } else {
-        alert('Please install MetaMask!');
+        alert("MetaMask not detected! Please install MetaMask.");
+        console.error("MetaMask not found in browser.");
       }
     };
 
     mintButton.onclick = async () => {
       if (!signer) {
-        alert('Please connect wallet first!');
+        alert("Connect your wallet first.");
         return;
       }
-      const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
-      const tokenURI = prompt("Enter your NFT metadata URI:");
-      if (!tokenURI) return;
+
+      const tokenURI = tokenURIInput.value.trim();
+      if (!tokenURI) {
+        alert("Please enter a token URI.");
+        return;
+      }
 
       try {
+        const contract = new ethers.Contract(contractAddress, contractABI, signer);
         const tx = await contract.mint(tokenURI);
         await tx.wait();
-        alert('NFT Minted Successfully!');
+        alert("NFT Minted Successfully!");
+        console.log("Mint transaction:", tx);
       } catch (err) {
-        console.error('Minting Error:', err);
-        alert('Minting failed.');
+        console.error("Minting failed:", err);
+        alert("Minting failed. See console for details.");
       }
     };
   </script>
