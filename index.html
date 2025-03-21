@@ -2,67 +2,68 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NFT Minter - Monad</title>
-  <link rel="stylesheet" href="styles.css">
-  <!-- Include ethers.js from CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Ethers.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
 </head>
 <body>
   <header>
-    <h1>NFT Minter</h1>
-    <button id="connectWallet">Connect Wallet</button>
+    <div class="logo">Monad NFT Minter</div>
+    <button id="connectWalletBtn">Connect Wallet</button>
   </header>
 
   <main>
-    <h2>Mint Your NFT</h2>
+    <h1>Mint Your NFT</h1>
     <input type="text" id="tokenURI" placeholder="Enter Token URI" />
     <button id="mintBtn">Mint NFT</button>
-    <p id="status"></p>
+    <p id="statusMsg"></p>
   </main>
 
   <footer>
-    <p>Powered by Monad & Ethers.js</p>
+    <p>&copy; 2025 Monad NFT Minter</p>
   </footer>
 
+  <script src="config.js"></script>
   <script>
+    const connectWalletBtn = document.getElementById('connectWalletBtn');
+    const mintBtn = document.getElementById('mintBtn');
+    const statusMsg = document.getElementById('statusMsg');
     let signer;
-    let contract;
 
-    const contractAddress = "0xE113e1194f223E53Dda814b5f3F8F20019b8cD45";
-    const contractABI = [ /* paste the full ABI here or import from config.js */ ];
-
-    document.getElementById("connectWallet").onclick = async () => {
-      if (typeof window.ethereum !== "undefined") {
+    connectWalletBtn.onclick = async () => {
+      if (window.ethereum) {
         try {
+          await window.ethereum.request({ method: 'eth_requestAccounts' });
           const provider = new ethers.providers.Web3Provider(window.ethereum);
-          await provider.send("eth_requestAccounts", []);
           signer = provider.getSigner();
-          contract = new ethers.Contract(contractAddress, contractABI, signer);
-          const userAddress = await signer.getAddress();
-          document.getElementById("connectWallet").innerText = userAddress.slice(0,6) + "..." + userAddress.slice(-4);
-        } catch (error) {
-          console.error(error);
+          connectWalletBtn.innerText = "Wallet Connected";
+        } catch (err) {
+          console.error(err);
+          statusMsg.innerText = "Wallet connection failed.";
         }
       } else {
-        alert("MetaMask not found");
+        alert("MetaMask not detected. Please install it.");
       }
     };
 
-    document.getElementById("mintBtn").onclick = async () => {
-      const uri = document.getElementById("tokenURI").value;
-      if (!uri || !contract) {
-        alert("Please connect wallet and enter a URI.");
+    mintBtn.onclick = async () => {
+      const uri = document.getElementById('tokenURI').value.trim();
+      if (!uri || !signer) {
+        statusMsg.innerText = "Enter URI and connect wallet.";
         return;
       }
+
+      const contract = new ethers.Contract(contractAddress, contractABI, signer);
       try {
         const tx = await contract.mint(uri);
-        document.getElementById("status").innerText = "Minting... Please wait.";
+        statusMsg.innerText = "Minting... Transaction sent.";
         await tx.wait();
-        document.getElementById("status").innerText = "NFT Minted!";
+        statusMsg.innerText = "NFT Minted Successfully!";
       } catch (err) {
         console.error(err);
-        document.getElementById("status").innerText = "Mint failed.";
+        statusMsg.innerText = "Minting failed.";
       }
     };
   </script>
