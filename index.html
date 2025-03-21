@@ -4,29 +4,132 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Monad NFT Minter</title>
-  <link rel="stylesheet" href="style.css" />
+  <!-- Ethers.js -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(to right, #1f1c2c, #928dab);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header, footer {
+      background-color: #2c2c54;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h1, footer p {
+      margin: 0;
+    }
+    .connect-btn {
+      background: #8e44ad;
+      border: none;
+      padding: 10px 15px;
+      color: white;
+      cursor: pointer;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+    .connect-btn:hover {
+      background: #732d91;
+    }
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+    }
+    .mint-btn {
+      margin-top: 20px;
+      background: #27ae60;
+      border: none;
+      padding: 10px 20px;
+      color: white;
+      cursor: pointer;
+      border-radius: 5px;
+      font-size: 1rem;
+      font-weight: bold;
+    }
+    .mint-btn:hover {
+      background: #1e8449;
+    }
+  </style>
 </head>
 <body>
   <header>
     <h1>Monad NFT Minter</h1>
-    <button id="connectWalletBtn">Connect Wallet</button>
+    <button id="connectWallet" class="connect-btn">Connect Wallet</button>
   </header>
 
   <main>
-    <div class="mint-box">
-      <h2>Mint Your NFT</h2>
-      <input type="text" id="tokenURI" placeholder="Enter Token URI" />
-      <button id="mintBtn">Mint NFT</button>
-      <p id="statusMsg"></p>
-    </div>
+    <h2>Mint Your Unique NFT</h2>
+    <p>Click below to mint your NFT on Monad</p>
+    <button id="mintButton" class="mint-btn">Mint NFT</button>
   </main>
 
   <footer>
-    <p>&copy; 2025 Monad NFT Minter</p>
+    <p>&copy; 2025 Monad Minter. All rights reserved.</p>
   </footer>
 
-  <script src="config.js"></script>
-  <script src="app.js"></script>
+  <!-- App JS -->
+  <script>
+    const connectWalletButton = document.getElementById('connectWallet');
+    const mintButton = document.getElementById('mintButton');
+
+    let signer;
+    const CONTRACT_ADDRESS = '0xE113e1194f223E53Dda814b5f3F8F20019b8cD45';
+    const ABI = [
+      {
+        "inputs": [{"internalType": "string", "name": "_tokenURI", "type": "string"}],
+        "name": "mint",
+        "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    ];
+
+    connectWalletButton.onclick = async () => {
+      if (typeof window.ethereum !== 'undefined') {
+        try {
+          const provider = new ethers.providers.Web3Provider(window.ethereum);
+          await provider.send("eth_requestAccounts", []);
+          signer = provider.getSigner();
+          const address = await signer.getAddress();
+          connectWalletButton.textContent = `Connected: ${address.slice(0,6)}...${address.slice(-4)}`;
+        } catch (err) {
+          console.error('Connection Error:', err);
+        }
+      } else {
+        alert('Please install MetaMask!');
+      }
+    };
+
+    mintButton.onclick = async () => {
+      if (!signer) {
+        alert('Please connect wallet first!');
+        return;
+      }
+      const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
+      const tokenURI = prompt("Enter your NFT metadata URI:");
+      if (!tokenURI) return;
+
+      try {
+        const tx = await contract.mint(tokenURI);
+        await tx.wait();
+        alert('NFT Minted Successfully!');
+      } catch (err) {
+        console.error('Minting Error:', err);
+        alert('Minting failed.');
+      }
+    };
+  </script>
 </body>
 </html>
