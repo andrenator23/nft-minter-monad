@@ -1,15 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>NFT Minter - Monad Testnet</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Monad NFT Minter</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0f0f0f;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: #1a1a1a;
+      border-bottom: 1px solid #333;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+      color: #8b5cf6;
+    }
+    .connect-btn {
+      padding: 0.5rem 1rem;
+      background: #8b5cf6;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+    }
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+    }
+    input {
+      padding: 0.5rem;
+      width: 80%;
+      max-width: 400px;
+      margin-bottom: 1rem;
+      border-radius: 5px;
+      border: 1px solid #555;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      background: #8b5cf6;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+      margin-top: 0.5rem;
+    }
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background: #1a1a1a;
+      border-top: 1px solid #333;
+      font-size: 0.9rem;
+    }
+  </style>
 </head>
 <body>
-    <h1>Mint Your NFT on Monad Testnet</h1>
-    <input type="text" id="tokenURI" placeholder="Enter IPFS metadata URI" />
-    <button onclick="mintNFT()">Mint NFT</button>
-    <p id="status"></p>
-    <script src="index.js"></script>
+
+<header>
+  <h1>Monad NFT Minter</h1>
+  <button class="connect-btn" id="connectBtn">Connect Wallet</button>
+</header>
+
+<main>
+  <h2>Mint Your NFT</h2>
+  <input type="text" id="tokenURI" placeholder="Enter Token URI..." />
+  <button id="mintBtn">Mint NFT</button>
+  <p id="status"></p>
+</main>
+
+<footer>
+  &copy; 2025 Monad Minter. All rights reserved.
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
+<script type="module">
+  import { config } from './config.js';
+
+  const connectBtn = document.getElementById('connectBtn');
+  const mintBtn = document.getElementById('mintBtn');
+  const status = document.getElementById('status');
+
+  let provider, signer, contract;
+
+  connectBtn.onclick = async () => {
+    if (window.ethereum) {
+      try {
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        provider = new ethers.providers.Web3Provider(window.ethereum);
+        signer = provider.getSigner();
+        contract = new ethers.Contract(config.contractAddress, config.abi, signer);
+        status.textContent = 'Wallet connected!';
+      } catch (err) {
+        status.textContent = 'Connection failed.';
+        console.error(err);
+      }
+    } else {
+      alert('Please install MetaMask!');
+    }
+  };
+
+  mintBtn.onclick = async () => {
+    const uri = document.getElementById('tokenURI').value;
+    if (!uri) {
+      status.textContent = 'Please enter a Token URI.';
+      return;
+    }
+    try {
+      const tx = await contract.mint(uri);
+      status.textContent = 'Minting...';
+      await tx.wait();
+      status.textContent = 'NFT minted successfully!';
+    } catch (err) {
+      status.textContent = 'Mint failed.';
+      console.error(err);
+    }
+  };
+</script>
+
 </body>
 </html>
