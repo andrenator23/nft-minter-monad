@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Monad NFT Minter</title>
   <link rel="stylesheet" href="style.css" />
-  <script src="https://cdn.jsdelivr.net/npm/ethers/dist/ethers.min.js"></script>
-  <script defer src="config.js"></script>
-  <script defer src="app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
 </head>
 <body>
   <header>
@@ -16,14 +14,19 @@
   </header>
 
   <main>
-    <h2>Mint Your NFT</h2>
-    <input type="text" id="tokenURI" placeholder="Enter Token URI" />
-    <button id="mintBtn">Mint NFT</button>
-    <p id="statusMsg"></p>
+    <div class="mint-box">
+      <h2>Mint Your NFT</h2>
+      <input type="text" id="tokenURI" placeholder="Enter Token URI" />
+      <button id="mintBtn">Mint NFT</button>
+      <p id="statusMsg"></p>
+    </div>
   </main>
 
   <footer>
-    <p>&copy; 2025 Monad NFT Minter. All rights reserved.</p>
+    <p>&copy; 2025 Monad NFT Minter</p>
   </footer>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
